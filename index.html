@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>App Laporan MRSM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+body{
+    font-family: "Times New Roman", serif;
+    background:#f2f4f7;
+    margin:0;
+    padding:20px;
+}
+.container{
+    max-width:900px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:8px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+.logo{
+    text-align:center;
+}
+.logo img{
+    width:110px;
+}
+.header-text{
+    text-align:center;
+    margin-top:10px;
+}
+.header-text h3{
+    margin:4px 0;
+    font-size:16px;
+    font-weight:bold;
+}
+.form-group{
+    margin-bottom:12px;
+}
+label{
+    font-weight:bold;
+    font-size:14px;
+}
+input, textarea, select{
+    width:100%;
+    padding:8px;
+    margin-top:4px;
+    font-size:14px;
+}
+textarea{
+    resize:vertical;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#0b5ed7;
+    color:#fff;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    border-radius:4px;
+}
+button:hover{
+    background:#084298;
+}
+
+/* PDF STYLE */
+#pdf{
+    font-size:13px;
+}
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+.table td{
+    border:1px solid #000;
+    padding:6px;
+    vertical-align:top;
+}
+.section-title{
+    background:#e9ecef;
+    font-weight:bold;
+    text-align:center;
+}
+.image-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    margin-top:10px;
+}
+.image-grid img{
+    width:100%;
+    height:130px;
+    object-fit:cover;
+    border:1px solid #000;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="logo">
+        <img src="https://1.bp.blogspot.com/-zwf1nLbecI8/YC9ejOFTzqI/AAAAAAAAd4Y/LzACuJk5AG4HMV2zS6qD37SsOAVV-4esQCNcBGAsYHQ/s765/MRSM.png">
+    </div>
+
+    <div class="header-text">
+        <h3>LAPORAN KELAB / SUKAN DAN UNIT BERUNIFORM</h3>
+        <h3>MRSM TUN MUSTAPHA TAWAU</h3>
+        <h3>BATU 5 JALAN APAS, 91000 TAWAU, SABAH</h3>
+    </div>
+
+    <hr>
+
+    <div class="form-group">
+        <label>Kategori</label>
+        <select id="kategori">
+            <option value="sukan">Sukan</option>
+            <option value="kelab">Kelab</option>
+            <option value="unit">Unit Beruniform</option>
+        </select>
+    </div>
+
+    <div class="form-group"><label>Nama Program / Aktiviti</label><input id="nama"></div>
+    <div class="form-group"><label>Anjuran</label><input id="anjuran"></div>
+    <div class="form-group"><label>Tarikh</label><input id="tarikh"></div>
+    <div class="form-group"><label>Masa</label><input id="masa"></div>
+    <div class="form-group"><label>Tempat</label><input id="tempat"></div>
+    <div class="form-group"><label>Kehadiran Pelajar</label><input id="kehadiran"></div>
+
+    <div class="form-group"><label>Objektif</label><textarea id="objektif"></textarea></div>
+    <div class="form-group"><label>Aktiviti</label><textarea id="aktiviti"></textarea></div>
+    <div class="form-group"><label>Kekuatan</label><textarea id="kekuatan"></textarea></div>
+    <div class="form-group"><label>Kelemahan</label><textarea id="kelemahan"></textarea></div>
+
+    <div class="form-group">
+        <label>Muat Naik Gambar (Max 6)</label>
+        <input type="file" id="gambar" multiple accept="image/*">
+    </div>
+
+    <button onclick="janaPDF()">SIMPAN & JANA PDF</button>
+</div>
+
+<!-- PDF CONTENT -->
+<div id="pdf" style="display:none">
+    <table class="table">
+        <tr><td colspan="2" class="section-title">MAKLUMAT PROGRAM</td></tr>
+        <tr><td>Nama Program</td><td id="p_nama"></td></tr>
+        <tr><td>Anjuran</td><td id="p_anjuran"></td></tr>
+        <tr><td>Tarikh</td><td id="p_tarikh"></td></tr>
+        <tr><td>Masa</td><td id="p_masa"></td></tr>
+        <tr><td>Tempat</td><td id="p_tempat"></td></tr>
+        <tr><td>Kehadiran</td><td id="p_kehadiran"></td></tr>
+
+        <tr><td colspan="2" class="section-title">BUTIRAN</td></tr>
+        <tr><td>Objektif</td><td id="p_objektif"></td></tr>
+        <tr><td>Aktiviti</td><td id="p_aktiviti"></td></tr>
+        <tr><td>Kekuatan</td><td id="p_kekuatan"></td></tr>
+        <tr><td>Kelemahan</td><td id="p_kelemahan"></td></tr>
+    </table>
+
+    <div class="image-grid" id="p_gambar"></div>
+</div>
+
+<script>
+function janaPDF(){
+    p_nama.innerText = nama.value;
+    p_anjuran.innerText = anjuran.value;
+    p_tarikh.innerText = tarikh.value;
+    p_masa.innerText = masa.value;
+    p_tempat.innerText = tempat.value;
+    p_kehadiran.innerText = kehadiran.value;
+    p_objektif.innerText = objektif.value;
+    p_aktiviti.innerText = aktiviti.value;
+    p_kekuatan.innerText = kekuatan.value;
+    p_kelemahan.innerText = kelemahan.value;
+
+    p_gambar.innerHTML = "";
+    [...gambar.files].slice(0,6).forEach(f=>{
+        let img=document.createElement("img");
+        img.src=URL.createObjectURL(f);
+        p_gambar.appendChild(img);
+    });
+
+    html2pdf().from(document.getElementById("pdf")).set({
+        margin:5,
+        filename:'Laporan_MRSM.pdf',
+        image:{type:'jpeg',quality:0.98},
+        html2canvas:{scale:2},
+        jsPDF:{format:'a4',orientation:'portrait'}
+    }).save();
+
+    let link={
+        sukan:"https://maranet-my.sharepoint.com/my?id=%2Fpersonal%2Fhamdan%5Fpare%5Fmara%5Fgov%5Fmy%2FDocuments%2FLAPORAN%20MRSM%20TMT%2FSUKAN",
+        kelab:"https://maranet-my.sharepoint.com/my?id=%2Fpersonal%2Fhamdan%5Fpare%5Fmara%5Fgov%5Fmy%2FDocuments%2FLAPORAN%20MRSM%20TMT%2FKELAB",
+        unit:"https://maranet-my.sharepoint.com/my?id=%2Fpersonal%2Fhamdan%5Fpare%5Fmara%5Fgov%5Fmy%2FDocuments%2FLAPORAN%20MRSM%20TMT%2FUNIT%20BERUNIFORM"
+    };
+    window.open(link[kategori.value],"_blank");
+}
+</script>
+
+</body>
+</html>
